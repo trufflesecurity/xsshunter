@@ -1,6 +1,6 @@
 const notification = require('./notification');
  
-test('send an email notification', () => {
+test('send an email notification', async () => {
     const email = "dustin@trufflesec.com"
 
     var payload_fire_data = {
@@ -20,6 +20,5 @@ test('send an email notification', () => {
         correlated_request: 'No correlated request found for this injection.',
     }
 
-    notification.send_email_notification(payload_fire_data, email);
-
+    await expect(notification.send_email_notification(payload_fire_data, email)).resolves.toBe(true);
   });

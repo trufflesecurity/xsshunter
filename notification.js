@@ -27,15 +27,14 @@ async function send_email_notification(xss_payload_fire_data, email) {
 			]
 		},		
 	}
-	  
-	sendgrid
+	response = await sendgrid
 	.send(msg)
-	.then((response) => {
-		console.log("Message emailed with status %d", response[0].statusCode);
-	})
 	.catch((error) => {
 		console.error(error);
 	})
+
+	console.log("Message emailed with status %d", response[0].statusCode);
+	return true;
 }
 
 module.exports.send_email_notification = send_email_notification;

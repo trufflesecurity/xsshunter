@@ -20,17 +20,21 @@ async function send_email_notification(xss_payload_fire_data, email) {
 		subject: `[XSS Hunter Express] XSS Payload Fired On ${xss_payload_fire_data.url}`,
 		text: "Only HTML reports are available, please use an email client which supports this.",
 		html: notification_html_email_body,
+		asm: {
+			groupId: parseInt(process.env.SENDGRID_UNSUBSRIBE_GROUP_ID),
+			groupsToDisplay: [
+				parseInt(process.env.SENDGRID_UNSUBSRIBE_GROUP_ID)
+			]
+		},		
 	}
 	  
 	sendgrid
 	.send(msg)
 	.then((response) => {
 		console.log("Message emailed with status %d", response[0].statusCode);
-		return 0
 	})
 	.catch((error) => {
-		console.error(error)
-		return 1
+		console.error(error);
 	})
 }
 

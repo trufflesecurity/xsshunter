@@ -203,7 +203,7 @@ async function set_up_api_server(app) {
             return res.sendStatus(404);
         }
 
-        const gz_image_path = `${SCREENSHOTS_DIR}/${screenshot_filename}.gz`;
+        const gz_image_path = `${screenshot_filename}.gz`;
 
         if (process.env.USE_CLOUD_STORAGE == "true"){
             const storage = new Storage();
@@ -382,7 +382,7 @@ async function set_up_api_server(app) {
     		},
     		attributes: ['id', 'screenshot_id']
     	});
-        const fileName = `${SCREENSHOTS_DIR}/${payload.screenshot_id}.png.gz`;
+        const fileName = `${payload.screenshot_id}.png.gz`;
     	const screenshots_to_delete = screenshot_id_records.map(payload => {
     		return fileName;
     	});

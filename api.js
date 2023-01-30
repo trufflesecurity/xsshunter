@@ -148,20 +148,20 @@ async function set_up_api_server(app) {
 
     	// If the user is authenticated, let them pass
     	if(req.session.authenticated === true) {
+            // const user = await Users.findOne({ where: { 'id': req.session.user_id } });
+            // if (user == null) {
+            //     req.session.destroy();
+            //     res.redirect(302, '/').json({
+            //         "success": false,
+            //         "error": "You must be authenticated to use this endpoint.",
+            //         "code": "NOT_AUTHENTICATED"
+            //     }).end();
+            //     return
+            // }
+
     		next();
     		return;
     	}
-
-        const user = await Users.findOne({ where: { 'email': req.session.email } });
-        if (user === null) {
-            req.session.destroy();
-            res.redirect(302, '/').json({
-                "success": false,
-                "error": "You must be authenticated to use this endpoint.",
-                "code": "NOT_AUTHENTICATED"
-            }).end();
-            return
-        }
 
     	// Otherwise, fall to blocking them by default.
 	    res.status(401).json({
@@ -375,7 +375,8 @@ async function set_up_api_server(app) {
         }
     }
     app.delete(constants.API_BASE_PATH + 'payloadfires', validate({ body: DeletePayloadFiresSchema }), async (req, res) => {
-    	const ids_to_delete = req.body.ids;
+        console.log("Deleting payload fires: " + req.body.ids)
+        const ids_to_delete = req.body.ids;
 
     	// Pull the corresponding screenshot_ids from the DB so
     	// we can delete all the payload fire images as well as

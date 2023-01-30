@@ -111,12 +111,7 @@ Secrets.init({
 			unique: false,
 			fields: ['secret_type'],
 			method: 'BTREE',
-		},
-        {
-            unique: false,
-            fields: ['secret_value'],
-            method: 'BTREE'
-        }
+		}
     ]
 });
 	
@@ -224,42 +219,12 @@ PayloadFireResults.init({
 	indexes: [
 		{
 			unique: false,
-			fields: ['url'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
-			fields: ['CORS'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
 			fields: ['user_id'],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
 			fields: ['ip_address'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
-			fields: ['referer'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
-			fields: ['user_agent'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
-			fields: ['cookies'],
-			method: 'BTREE',
-		},
-		{
-			unique: false,
-			fields: ['title'],
 			method: 'BTREE',
 		},
 		{
@@ -310,13 +275,7 @@ CollectedPages.init({
 }, {
 	sequelize,
 	modelName: 'collected_pages',
-	indexes: [
-		{
-			unique: false,
-			fields: ['uri'],
-			method: 'BTREE',
-		}
-	]
+	indexes: []
 });
 
 

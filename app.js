@@ -17,6 +17,8 @@ const notification = require('./notification.js');
 const api = require('./api.js');
 const validate = require('express-jsonschema').validate;
 const constants = require('./constants.js');
+const Sentry = require('@sentry/node');
+const Tracing = require("@sentry/tracing");
 
 function set_secure_headers(req, res) {
 	res.set("X-XSS-Protection", "mode=block");
@@ -51,6 +53,31 @@ const SCREENSHOT_FILENAME_REGEX = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]
 
 async function get_app_server() {
 	const app = express();
+	
+	if (process.env.SENTRY_ENABLED === "true") {
+		Sentry.init({
+			dsn: process.env.SENTRY_DSN,
+			integrations: [
+			// enable HTTP calls tracing
+			new Sentry.Integrations.Http({ tracing: true }),
+			// enable Express.js middleware tracing
+			new Tracing.Integrations.Express({ app }),
+			],
+		
+			// Set tracesSampleRate to 1.0 to capture 100%
+			// of transactions for performance monitoring.
+			// We recommend adjusting this value in production
+			tracesSampleRate: 0.01,
+		});
+
+		// RequestHandler creates a separate execution context using domains, so that every
+		// transaction/span/breadcrumb is attached to its own Hub instance
+		app.use(Sentry.Handlers.requestHandler());
+		// TracingHandler creates a trace for every incoming request
+		app.use(Sentry.Handlers.tracingHandler());
+		app.use(Sentry.Handlers.errorHandler());
+	}
+
 	app.set('trust proxy', true);
 	app.disable('x-powered-by');
 

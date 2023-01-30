@@ -13,6 +13,8 @@
     "@deveodk/vue-toastr": "^1.1.0",
     "@google-cloud/storage": "^6.9.0",
     "@sendgrid/mail": "^7.7.0",
+    "@sentry/node": "^7.34.0",
+    "@sentry/tracing": "^7.34.0",
     "@truffledustin/node-client-sessions": "^0.8.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.1",

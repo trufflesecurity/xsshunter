@@ -8,7 +8,7 @@
                 <li class="nav-item mt-5">
                   <a target="_blank" href="https://twitter.com/TruffleSecurity" class="nav-link">
                     <i class="fab fa-twitter"></i>
-                    <p>Maintained by @TruffleSecurity</p>
+                    <p>@TruffleSecurity</p>
                   </a>
                 </li>
                 <li class="nav-item">

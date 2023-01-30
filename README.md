@@ -1,4 +1,4 @@
-# XSS Hunter Express
+# XSSHunter
 ## *Sets up in 5 minutes and requires no maintenance*
 
 The fastest way to set up XSS Hunter to test and find blind cross-site scripting vulnerabilities.
@@ -76,10 +76,11 @@ Assuming all has gone well, you'll see an admin password printed onto your scree
 
 ## Screenshots
 
-![](images/payload-fires.png)
-![](images/collected-pages.png)
-![](images/settings.png)
-![](images/xss-payloads.png)
+<img width="957" alt="blur" src="https://user-images.githubusercontent.com/3084554/215611441-1cf1401c-fd72-41d2-ae92-98b277b9701b.png">
+<img width="895" alt="dotgit" src="https://user-images.githubusercontent.com/3084554/215611449-3a75c49b-6e48-4347-89f9-bfbb8dbc16de.png">
+<img width="895" alt="secrets" src="https://user-images.githubusercontent.com/3084554/215611453-cecb391d-367b-45d0-86eb-1c465185dfb3.png">
+<img width="895" alt="cors" src="https://user-images.githubusercontent.com/3084554/215611455-5831c4a6-fd35-457e-82bd-524d5d494319.png">
+
 
 ## Credits
 

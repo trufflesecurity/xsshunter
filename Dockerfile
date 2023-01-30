@@ -1,8 +1,9 @@
-FROM node:16
+FROM node:16-bullseye
 
 RUN mkdir /app/
 WORKDIR /app/
 RUN npm install pm2 -g
+RUN apt update; apt install -y libstdc++6
 
 COPY front-end/ /app/front-end/
 WORKDIR /app/front-end/

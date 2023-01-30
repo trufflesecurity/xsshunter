@@ -31,7 +31,7 @@ Users.init({
 		allowNull: false,
 		primaryKey: true,
 		type: Sequelize.UUID,
-		defaultValue: uuid.v4()
+		defaultValue: Sequelize.UUIDV4
 	},   
     email: {
         type: Sequelize.TEXT,
@@ -86,7 +86,7 @@ Secrets.init({
 		allowNull: false,
 		primaryKey: true,
 		type: Sequelize.UUID,
-		defaultValue: uuid.v4()
+		defaultValue: Sequelize.UUIDV4
 	},   
     payload_id: {
         type: Sequelize.TEXT,
@@ -129,7 +129,7 @@ PayloadFireResults.init({
 		allowNull: false,
 		primaryKey: true,
 		type: Sequelize.UUID,
-		defaultValue: uuid.v4()
+		defaultValue: Sequelize.UUIDV4
 	},
 	// URL the XSS payload fired on.
 	url: {
@@ -295,7 +295,7 @@ CollectedPages.init({
 		allowNull: false,
 		primaryKey: true,
 		type: Sequelize.UUID,
-		defaultValue: uuid.v4()
+		defaultValue: Sequelize.UUIDV4
 	},
 	// URL of the collected page
 	uri: {
@@ -326,7 +326,7 @@ InjectionRequests.init({
 		allowNull: false,
 		primaryKey: true,
 		type: Sequelize.UUID,
-		defaultValue: uuid.v4()
+		defaultValue: Sequelize.UUIDV4
 	},
 	/*
 		The full text of the request for a given

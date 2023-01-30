@@ -201,7 +201,7 @@ async function set_up_api_server(app) {
           res.redirect("/app/");
       } catch (error) {
         console.log(`Error Occured: ${error}`);
-        res.status(500).send("Error Occured");
+        res.status(500).send("Error Occured. We're seeing a lot of traffic now. Please try again soon.");
       }
     });
 

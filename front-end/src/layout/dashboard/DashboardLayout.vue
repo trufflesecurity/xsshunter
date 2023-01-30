@@ -20,7 +20,7 @@
                 <li class="nav-item mt-5">
                     <a target="_blank" href="https://trufflesecurity.com/" class="nav-link">
                         <i class="fas fab fa-power-off"></i>
-                        <p>Powered by Truffle Security Co</p>
+                        <p>Powered by Truffle Security Co.</p>
                     </a>
                 </li>
             </template>

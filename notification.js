@@ -33,7 +33,7 @@ async function send_email_notification(xss_payload_fire_data, email) {
 		console.error(error);
 	})
 
-	console.log("Message emailed with status %d", response[0].statusCode);
+	console.debug("Message emailed with status %d", response[0].statusCode);
 	return true;
 }
 

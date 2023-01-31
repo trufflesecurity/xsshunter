@@ -19,6 +19,7 @@ const validate = require('express-jsonschema').validate;
 const constants = require('./constants.js');
 const Sentry = require('@sentry/node');
 const Tracing = require("@sentry/tracing");
+const Profiling = require("@sentry/profiling-node");
 
 function set_secure_headers(req, res) {
 	res.set("X-XSS-Protection", "mode=block");
@@ -58,15 +59,15 @@ async function get_app_server() {
 		Sentry.init({
 			dsn: process.env.SENTRY_DSN,
 			integrations: [
-			// enable HTTP calls tracing
-			new Sentry.Integrations.Http({ tracing: true }),
-			// enable Express.js middleware tracing
-			new Tracing.Integrations.Express({ app }),
+				// enable HTTP calls tracing
+				new Sentry.Integrations.Http({ tracing: true }),
+				// enable Express.js middleware tracing
+				new Tracing.Integrations.Express({ app }),
+				// add beta profiling integration
+				new Profiling.ProfilingIntegration()
 			],
-		
-			// Set tracesSampleRate to 1.0 to capture 100%
-			// of transactions for performance monitoring.
-			// We recommend adjusting this value in production
+			// 1.0 is 100% capture rate
+			profilesSampleRate: 1.0,
 			tracesSampleRate: 0.01,
 		});
 

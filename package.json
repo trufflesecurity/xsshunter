@@ -15,6 +15,7 @@
     "@google-cloud/storage": "^6.9.0",
     "@sendgrid/mail": "^7.7.0",
     "@sentry/node": "^7.34.0",
+    "@sentry/profiling-node": "^0.0.12",
     "@sentry/tracing": "^7.34.0",
     "@truffledustin/node-client-sessions": "^0.8.0",
     "bcrypt": "^5.0.1",

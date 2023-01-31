@@ -22,6 +22,7 @@ const get_hashed_password = require('./utils.js').get_hashed_password;
 const get_secure_random_string = require('./utils.js').get_secure_random_string;
 const {google} = require('googleapis');
 const {OAuth2Client} = require('google-auth-library');
+const Sentry = require('@sentry/node');
 
 
 const SCREENSHOTS_DIR = path.resolve(process.env.SCREENSHOTS_DIR);
@@ -200,7 +201,8 @@ async function set_up_api_server(app) {
           req.session.authenticated = true;
           res.redirect("/app/");
       } catch (error) {
-        console.log(`Error Occured: ${error}`);
+        console.error(`Error Occured: ${error}`);
+        Sentry.captureException(error);
         res.status(500).send("Error Occured. We're seeing a lot of traffic now. Please try again soon.");
       }
     });
@@ -228,10 +230,11 @@ async function set_up_api_server(app) {
                 res.set('Content-Encoding', 'gzip');
                 res.set('Content-Type', 'image/png');
                 res.send(image);
-              } catch (error) {
+            } catch (error) {
                 console.error(error);
+                Sentry.captureException(error);
                 res.status(404).send(`Error retrieving image from GCS`);
-              }
+            }
         }else{
             const image_exists = await check_file_exists(gz_image_path);
 
@@ -617,6 +620,7 @@ async function set_up_api_server(app) {
 	            }).end();
 	            return
         	}
+            Sentry.captureException(e);
             res.status(200).json({
                 "success": false,
                 "error": "An unexpected error occurred.",

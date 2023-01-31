@@ -315,7 +315,7 @@ async function set_up_api_server(app) {
         let collisionUser;
         let desiredPath;
         if(typeof req.body.user_path == 'string'){
-            desiredPath = req.body.user_path;
+            desiredPath = req.body.user_path.toLowerCase();
             collisionUser = await Users.findOne({ where: { 'path': desiredPath } });
         }else{
             return res.status(200).json({

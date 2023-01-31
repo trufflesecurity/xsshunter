@@ -64,7 +64,7 @@ async function get_app_server() {
 				// enable Express.js middleware tracing
 				new Tracing.Integrations.Express({ app }),
 				// add beta profiling integration
-				new ProfilingIntegration()
+				new Profiling.ProfilingIntegration()
 			],
 			// 1.0 is 100% capture rate
 			profilesSampleRate: 1.0,

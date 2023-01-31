@@ -85,22 +85,7 @@ async function get_app_server() {
 	// I have a question for Express:
 	// https://youtu.be/ZtjFsQBuJWw?t=4
 	app.set('case sensitive routing', true);
-
-    // Making 100% sure this works like it should
-    // https://youtu.be/aCbfMkh940Q?t=6
-    app.use(async function(req, res, next) {
-		if(req.path.toLowerCase() === req.path) {
-			next();
-			return
-		}
-
-		res.status(401).json({
-			"success": false,
-			"error": "No.",
-			"code": "WHY_ARE_YOU_SHOUTING"
-		}).end();
-    });
-
+	
 	app.use(bodyParser.json());
 
     // Set security-related headers on requests

@@ -304,12 +304,25 @@ try {
     probe_return_data['injection_key'] = '';
 }
 
-probe_return_data['title'] = document.title;
+try{
+    probe_return_data['title'] = document.title;
+} catch( e ){
+    probe_return_data['title'] = '';
+}
 
-//probe_return_data['text'] = get_dom_text();
+try{
+    probe_return_data['text'] = get_dom_text();
+} catch( e ){
+    probe_return_data['text'] = '';
+}
 
+try{
+    probe_return_data['was_iframe'] = !(window.top === window)
+} catch( e ){
+    probe_return_data['was_iframe'] = '';
 
-probe_return_data['was_iframe'] = !(window.top === window)
+}
+
 
 async function hook_load_if_not_ready() {
     try {

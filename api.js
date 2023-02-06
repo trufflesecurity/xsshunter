@@ -195,6 +195,7 @@ async function set_up_api_server(app) {
             user.path = makeRandomPath(10);
             user.injectionCorrelationAPIKey = makeRandomPath(20);
             user.save();
+            console.log(`Created new user ID: ${user.id}`)
           }
           req.session.email = user.email;
           req.session.user_id = user.id;
@@ -377,7 +378,7 @@ async function set_up_api_server(app) {
         }
     }
     app.delete(constants.API_BASE_PATH + 'payloadfires', validate({ body: DeletePayloadFiresSchema }), async (req, res) => {
-        console.log("Deleting payload fires: " + req.body.ids)
+        console.debug("Deleting payload fires: " + req.body.ids)
         const ids_to_delete = req.body.ids;
 
     	// Pull the corresponding screenshot_ids from the DB so

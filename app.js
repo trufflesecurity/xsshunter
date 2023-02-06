@@ -202,23 +202,23 @@ async function get_app_server() {
 		}).end();
 
         if(req.get('host') != process.env.XSS_HOSTNAME) {
-            console.log(`got bad host ${req.get('host')}`);
+            console.debug(`got bad host ${req.get('host')}`);
             return res.redirect("/app/")
         }
         const userPath = req.body.path;
         if (!userPath){
-            console.log("req had no user path ID");
+            console.debug("req had no user path ID");
             return
         }
 
         const user = await Users.findOne({ where: { 'path': userPath } });
 
         if (user === null){
-            console.log("No user found for path provided");
+            console.debug("No user found for path provided");
             return
         }
 
-        console.log(`Got payload for user ${user.email}`);
+        console.debug(`Got payload for user id ${user.id}`);
         
         const userID = user.id;
 
@@ -257,7 +257,7 @@ async function get_app_server() {
                     cacheControl: 'public, max-age=31536000',
                 },
             });
-            console.log(`${payload_fire_image_id}.png.gz has been uploaded to GCS.`);
+            console.debug(`${payload_fire_image_id}.png.gz has been uploaded to GCS.`);
             await asyncfs.unlink(multer_temp_image_path);
             await asyncfs.unlink(gzipTempFileName);
         }else{
@@ -267,7 +267,7 @@ async function get_app_server() {
                     console.error(error);
                 }
 
-                console.log(`Gzip stream complete, deleting multer temp file: ${multer_temp_image_path}`);
+                console.debug(`Gzip stream complete, deleting multer temp file: ${multer_temp_image_path}`);
 
                 await asyncfs.unlink(multer_temp_image_path);
             });
@@ -311,7 +311,7 @@ async function get_app_server() {
 		// Store payload fire results in the database
 		const new_payload_fire_result = await database.savePayload(payload_fire_data);
 
-        console.log("saved record");
+        console.log(`Saved result for user id ${userID}`);
 		// Send out notification via configured notification channel
 		if(user.sendEmailAlerts && process.env.EMAIL_NOTIFICATIONS_ENABLED=="true") {
 			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
@@ -346,7 +346,7 @@ async function get_app_server() {
         res.set("Access-Control-Max-Age", "86400");
 
         if(req.get('host') != process.env.XSS_HOSTNAME) {
-            console.log(req.get('host'));
+            console.debug(req.get('host'));
             return res.redirect("/app/");
         }
 
@@ -354,10 +354,10 @@ async function get_app_server() {
         const user = await Users.findOne({ where: { 'path': userPath } });
 
         if (user === null){
-            console.log(`no user found for path ${userPath}`);
+            console.debug(`No user found for path ${userPath}`);
             return res.send("Hey");
         }
-        console.log(`Got xss fetch for user ${user.email}`);
+        console.log(`Got xss fetch for user id ${user.id}`);
         
         let chainload_uri = user.additionalJS;
         if (! chainload_uri){

@@ -405,7 +405,7 @@ async function set_up_api_server(app) {
             }));
         }else{
             await Promise.all(screenshots_to_delete.map(screenshot_path => {
-                return asyncfs.unlink(screenshot_path);
+                return asyncfs.unlink(`${SCREENSHOTS_DIR}/${screenshot_path}`);
             }));
         }
     	const payload_fires = await PayloadFireResults.destroy({

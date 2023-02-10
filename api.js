@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const openpgp = require('openpgp');
 const { Storage } = require('@google-cloud/storage');
 const express = require('express');
 const cors = require('cors');
@@ -647,6 +648,7 @@ async function set_up_api_server(app) {
         }
         returnObj.correlation_api_key = user.injectionCorrelationAPIKey;
         returnObj.chainload_uri = user.additionalJS;
+        returnObj.pgp_key = user.pgp_key;
         returnObj.send_alert_emails = user.sendEmailAlerts;
        
         res.status(200).json({
@@ -707,11 +709,25 @@ async function set_up_api_server(app) {
             user.additionalJS = null;
         }
 
+        if(req.body.pgp_key){
+            try{
+                const publicKey = await openpgp.readKey({ armoredKey: req.body.pgp_key });
+            }catch(e){
+                console.log(e.stack);
+                return res.status(400).json({
+                    'status': false,
+                    'error': 'invalid PGP key'
+                }).end();
+            }
+            user.pgp_key = req.body.pgp_key;
+        }
+
         if(req.body.send_alert_emails !== undefined) {
             user.sendEmailAlerts = req.body.send_alert_emails;
         }
-
         await user.save();
+        console.log("HI");
+        console.log(user.pgp_key);
 
         res.status(200).json({
             'success': true,

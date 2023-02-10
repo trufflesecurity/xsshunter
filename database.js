@@ -38,6 +38,11 @@ Users.init({
         allowNull: false,
         unique: true
     },
+    pgp_key: {
+        type: Sequelize.TEXT,
+        allownull: true,
+        unique: false
+    },
     path: {
         type: Sequelize.TEXT,
         allownull: true,
@@ -126,6 +131,19 @@ PayloadFireResults.init({
 		type: Sequelize.UUID,
 		defaultValue: Sequelize.UUIDV4
 	},
+    //boolean if it's encrypted or not
+    encrypted: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        unique: false,
+        defaultValue: false
+    },
+    //the encrypted data blob
+    encrypted_data: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        unique: false
+    },
 	// URL the XSS payload fired on.
 	url: {
 		type: Sequelize.TEXT,

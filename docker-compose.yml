@@ -10,11 +10,10 @@ services:
     volumes:
       # Directory where payload fire images are stored.
       - ./payload-fire-images:/app/payload-fire-images
+      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
     depends_on:
       postgresdb:
         condition: service_healthy
-    volumes:
-      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
   postgresdb:
     image: postgres
     restart: always

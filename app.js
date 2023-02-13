@@ -221,7 +221,7 @@ async function get_app_server() {
         console.debug(`Got payload for user id ${user.id}`);
         
         const userID = user.id;
-        const encrypted = false;
+        let encrypted = false;
         if ("encrypted_data" in req.body){
             encrypted = true;
         }
@@ -230,12 +230,14 @@ async function get_app_server() {
     	// to write a gzipped version in the user-provided dir and then delete
     	// the original uncompressed image.
     	const payload_fire_image_id = uuid.v4();
+        let payload_fire_image_filename = "";
+        let filename_in_bucket = "";
         if(!encrypted){
-    	    const payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.png.gz`;
-            const filename_in_bucket = `${payload_fire_image_id}.png.gz`;
+    	    payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.png.gz`;
+            filename_in_bucket = `${payload_fire_image_id}.png.gz`;
         }else{
-    	    const payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.b64png.enc.gz`;
-            const filename_in_bucket = `${payload_fire_image_id}.b64png.enc.gz`;
+    	    payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.b64png.enc.gz`;
+            filename_in_bucket = `${payload_fire_image_id}.b64png.enc.gz`;
         }
     	const multer_temp_image_path = req.file.path;
 
@@ -379,7 +381,7 @@ async function get_app_server() {
             console.debug(`No user found for path ${userPath}`);
             return res.send("Hey");
         }
-        const pgp_key = user.pgp_key;
+        let pgp_key = user.pgp_key;
 
         if (! pgp_key){
             pgp_key = "";
@@ -392,7 +394,7 @@ async function get_app_server() {
             chainload_uri = '';
         }
         let xssURI = ""
-        if(process.env.XSS_HOSTNAME.startsWith("localhost")){
+        if(process.env.NODE_ENV == "development"){
             xssURI = `http://${process.env.XSS_HOSTNAME}`
         }else{
 

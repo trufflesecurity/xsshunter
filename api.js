@@ -481,6 +481,8 @@ async function set_up_api_server(app) {
                 "gitExposed": payload.gitExposed,
                 "createdAt": payload.createdAt,
                 "id": payload.id,
+                "encrypted": payload.encrypted,
+                "encrypted_data": payload.encrypted_data,
                 "updatedAt": payload.updatedAt,
                 "secrets": payload_secrets
             }

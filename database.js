@@ -144,6 +144,12 @@ PayloadFireResults.init({
         allowNull: true,
         unique: false
     },
+    //the public key used to encrypt the data
+    public_key: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        unique: false
+    },
 	// URL the XSS payload fired on.
 	url: {
 		type: Sequelize.TEXT,

@@ -292,7 +292,8 @@ async function get_app_server() {
                 user_id: userID,
                 encrypted: true,
                 encrypted_data: req.body.encrypted_data,
-                pgp_key: req.body.pgp_key
+                screenshot_id: payload_fire_image_id,
+                public_key: req.body.pgp_key
             }
         }else{
             payload_fire_data = {

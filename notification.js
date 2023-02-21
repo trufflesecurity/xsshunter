@@ -14,10 +14,12 @@ async function send_email_notification(xss_payload_fire_data, email) {
 		xss_payload_fire_data
 	);
 
+    const fire_location = (xss_payload_fire_data ? xss_payload_fire_data.url : 'With An Encryption Key');
+
 	const msg = {
 		from: process.env.EMAIL_FROM,
 		to: email,
-		subject: `[XSS Hunter Express] XSS Payload Fired On ${xss_payload_fire_data.url}`,
+		subject: `[XSS Hunter Express] XSS Payload Fired On ${fire_location}`,
 		text: "Only HTML reports are available, please use an email client which supports this.",
 		html: notification_html_email_body,
 		asm: {

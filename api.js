@@ -214,7 +214,7 @@ async function set_up_api_server(app) {
         const screenshot_filename = req.params.screenshotFilename;
 
         // Come correct or don't come at all.
-        if(!SCREENSHOT_FILENAME_REGEX.test(screenshot_filename) && !SCREENSHOT_FILENAME_REGEX_ENC.text(screenshot_filename)) {
+        if(!SCREENSHOT_FILENAME_REGEX.test(screenshot_filename) && !SCREENSHOT_FILENAME_REGEX_ENC.test(screenshot_filename)) {
             return res.sendStatus(404);
         }
 
@@ -489,6 +489,7 @@ async function set_up_api_server(app) {
                 "id": payload.id,
                 "encrypted": payload.encrypted,
                 "encrypted_data": payload.encrypted_data,
+                "public_key": payload.public_key,
                 "updatedAt": payload.updatedAt,
                 "secrets": payload_secrets
             }

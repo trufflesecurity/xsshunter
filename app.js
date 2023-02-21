@@ -287,10 +287,12 @@ async function get_app_server() {
         let payload_fire_data = {}
         if(encrypted){
             if (req.body.encrypted_data.length > 100000){
+                Sentry.captureMessage(`encrypted data length too long: ${req.body.encrypted_data.length}`);
                 return res.status(400).json({
-                    "status": "error length too long"
+                    "status": "error encrypted data length too long"
                 }).end();
             }else if (req.body.pgp_key.length > 100000){
+                Sentry.captureMessage(`public key  length too long: ${req.body.pgp_key.length}`);
                 return res.status(400).json({
                     "status": "error public key length too long"
                 }).end();

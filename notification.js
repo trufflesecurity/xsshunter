@@ -9,12 +9,16 @@ const XSS_PAYLOAD_FIRE_EMAIL_TEMPLATE = fs.readFileSync(
 );
 
 async function send_email_notification(xss_payload_fire_data, email) {
+    if (xss_payload_fire_data.encrypted_data){
+        xss_payload_fire_data.encrypted_data = xss_payload_fire_data.encrypted_data.replaceAll("\n", "</br>")
+        xss_payload_fire_data.public_key = xss_payload_fire_data.public_key.replaceAll("\n", "</br>")
+    }
 	const notification_html_email_body = mustache.render(
 		XSS_PAYLOAD_FIRE_EMAIL_TEMPLATE, 
 		xss_payload_fire_data
 	);
 
-    const fire_location = (xss_payload_fire_data ? xss_payload_fire_data.url : 'With An Encryption Key');
+    const fire_location = (xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
 
 	const msg = {
 		from: process.env.EMAIL_FROM,

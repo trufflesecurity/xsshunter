@@ -410,7 +410,7 @@ async function set_up_api_server(app) {
                 }else{
                     fileName = `${payload.screenshot_id}.png.gz`;
                 }
-                return storage.bucket(process.env.BUCKET_NAME).file(screenshot_path).delete();
+                return storage.bucket(process.env.BUCKET_NAME).file(filename).delete();
             }));
         }else{
             await Promise.all(screenshot_id_records.map(payload => {

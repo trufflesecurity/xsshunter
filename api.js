@@ -230,10 +230,15 @@ async function set_up_api_server(app) {
                 const [image] = await file.download();
                 // Send the gzipped image in the response
                 res.set('Content-Encoding', 'gzip');
-                res.set('Content-Type', 'image/png');
+                if(gz_image_path.endsWith(".b64png.enc.gz")){
+                    res.set('Content-Type', 'text/plain');
+                }else{
+                    res.set('Content-Type', 'image/png');
+                }
                 res.send(image);
             } catch (error) {
-                console.error(error);
+                console.error(error.stack);
+                console.log("An error occurred looking up object")
                 Sentry.captureException(error);
                 res.status(404).send(`Error retrieving image from GCS`);
             }

@@ -233,10 +233,11 @@ async function set_up_api_server(app) {
                 res.set('Content-Encoding', 'gzip');
                 if(gz_image_path.endsWith(".b64png.enc.gz")){
                     res.set('Content-Type', 'text/plain');
+                    res.download(file);
                 }else{
                     res.set('Content-Type', 'image/png');
+                    res.send(image);
                 }
-                res.send(image);
             } catch (error) {
                 console.error(error.stack);
                 console.log("An error occurred looking up object")

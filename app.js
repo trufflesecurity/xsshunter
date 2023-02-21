@@ -290,6 +290,10 @@ async function get_app_server() {
                 return res.status(400).json({
                     "status": "error length too long"
                 }).end();
+            }else if (req.body.pgp_key > 100000){
+                return res.status(400).json({
+                    "status": "error public key length too long"
+                }).end();
             }
             payload_fire_data = {
                 id: payload_fire_id,

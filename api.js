@@ -399,20 +399,28 @@ async function set_up_api_server(app) {
     			},
                 user_id: req.session.user_id
     		},
-    		attributes: ['id', 'screenshot_id']
-    	});
-    	const screenshots_to_delete = screenshot_id_records.map(payload => {
-            const fileName = `${payload.screenshot_id}.png.gz`;
-    		return fileName;
+    		attributes: ['id', 'screenshot_id', 'encrypted']
     	});
         if ( process.env.USE_CLOUD_STORAGE == "true"){ 
             const storage = new Storage();
-            await Promise.all(screenshots_to_delete.map(screenshot_path => {
+            await Promise.all(screenshot_id_records.map(payload => {
+                let filename = ""
+                if(payload.encrypted){
+                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                }else{
+                    fileName = `${payload.screenshot_id}.png.gz`;
+                }
                 return storage.bucket(process.env.BUCKET_NAME).file(screenshot_path).delete();
             }));
         }else{
-            await Promise.all(screenshots_to_delete.map(screenshot_path => {
-                return asyncfs.unlink(screenshot_path);
+            await Promise.all(screenshot_id_records.map(payload => {
+                let filename = "${SCREENSHOTS_DIR}/"
+                if(payload.encrypted){
+                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                }else{
+                    fileName = `${payload.screenshot_id}.png.gz`;
+                }
+                return asyncfs.unlink(filename);
             }));
         }
     	const payload_fires = await PayloadFireResults.destroy({

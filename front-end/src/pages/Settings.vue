@@ -30,6 +30,17 @@
                             </base-button>
                         </card>
                         <card>
+                            <h4 class="card-title">PGP Public Key</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Valid PGP public keys here will have the victim PGP encrypt the payload. This can only be decrypted locally by the corresponding private key.</h6>
+                            <p class="card-text">
+                                <textarea v-model="pgp_key" type="text" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK----- ..."></textarea>
+                            </p>
+                            <base-button type="primary" v-on:click="update_pgp_key">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="far fa-save"></i></span>
+                                Save pgp key
+                            </base-button>
+                        </card>
+                        <card>
                             <h4 class="card-title">Miscellaneous Options</h4>
                             <div v-if="send_alert_emails">
                                 <base-button type="primary" v-on:click="set_email_reporting">
@@ -155,6 +166,7 @@ export default {
         pull_latest_settings: async function() {
             const settings_keys = [
                 'chainload_uri',
+                'pgp_key',
                 'correlation_api_key',
                 'pages_to_collect',
                 'rate_limit',
@@ -169,6 +181,11 @@ export default {
                 this[settings_key] = settings[settings_key];
             });
 
+        },
+        update_pgp_key: async function() {
+            await api_request.update_pgp_key(this.pgp_key);
+            await this.pull_latest_settings();
+            toastr.success('Your pgp key has been updated.', 'PGP Key Updated')
         },
         update_chainload_uri: async function() {
             await api_request.set_chainload_uri(this.chainload_uri);
@@ -234,4 +251,16 @@ export default {
 .dropdown-item {
     font-size: 16px !important;
 }
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
 </style>
+

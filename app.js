@@ -50,7 +50,6 @@ const XSS_PAYLOAD = fs.readFileSync(
 var multer = require('multer');
 var upload = multer({ dest: '/tmp/' })
 const SCREENSHOTS_DIR = path.resolve(process.env.SCREENSHOTS_DIR);
-const SCREENSHOT_FILENAME_REGEX = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.png$/i);
 
 async function get_app_server() {
 	const app = express();
@@ -221,12 +220,24 @@ async function get_app_server() {
         console.debug(`Got payload for user id ${user.id}`);
         
         const userID = user.id;
+        let encrypted = false;
+        if ("encrypted_data" in req.body){
+            encrypted = true;
+        }
 
     	// Multer stores the image in the /tmp/ dir. We use this source image
     	// to write a gzipped version in the user-provided dir and then delete
     	// the original uncompressed image.
     	const payload_fire_image_id = uuid.v4();
-    	const payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.png.gz`;
+        let payload_fire_image_filename = "";
+        let filename_in_bucket = "";
+        if(!encrypted){
+    	    payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.png.gz`;
+            filename_in_bucket = `${payload_fire_image_id}.png.gz`;
+        }else{
+    	    payload_fire_image_filename = `${SCREENSHOTS_DIR}/${payload_fire_image_id}.b64png.enc.gz`;
+            filename_in_bucket = `${payload_fire_image_id}.b64png.enc.gz`;
+        }
     	const multer_temp_image_path = req.file.path;
 
     	// We also gzip the image so we don't waste disk space
@@ -252,7 +263,7 @@ async function get_app_server() {
             //uploading the gzipped file to GCS
             await bucket.upload(gzipTempFileName, {
                 gzip: true,
-                destination: `${payload_fire_image_id}.png.gz`,
+                destination: filename_in_bucket,
                 metadata: {
                     cacheControl: 'public, max-age=31536000',
                 },
@@ -273,29 +284,53 @@ async function get_app_server() {
             });
         }
     	const payload_fire_id = uuid.v4();
-		var payload_fire_data = {
-			id: payload_fire_id,
-            user_id: userID,
-			url: req.body.uri,
-			ip_address: req.ip,
-			referer: req.body.referrer,
-			user_agent: req.body['user-agent'],
-			cookies: req.body.cookies,
-			title: req.body.title,
-			secrets: JSON.parse(req.body.secrets),
-			origin: req.body.origin,
-			screenshot_id: payload_fire_image_id,
-			was_iframe: (req.body.was_iframe === 'true'),
-			browser_timestamp: parseInt(req.body['browser-time']),
-            correlated_request: 'No correlated request found for this injection.',
-		}
+        let payload_fire_data = {}
+        if(encrypted){
+            if (req.body.encrypted_data.length > 100000){
+                Sentry.captureMessage(`encrypted data length too long: ${req.body.encrypted_data.length}`);
+                return res.status(400).json({
+                    "status": "error encrypted data length too long"
+                }).end();
+            }else if (req.body.pgp_key.length > 100000){
+                Sentry.captureMessage(`public key  length too long: ${req.body.pgp_key.length}`);
+                return res.status(400).json({
+                    "status": "error public key length too long"
+                }).end();
+            }
+            payload_fire_data = {
+                id: payload_fire_id,
+                user_id: userID,
+                encrypted: true,
+                encrypted_data: req.body.encrypted_data,
+                screenshot_id: payload_fire_image_id,
+                public_key: req.body.pgp_key
+            }
+        }else{
+            payload_fire_data = {
+                id: payload_fire_id,
+                user_id: userID,
+                url: req.body.uri,
+                encrypted: false,
+                ip_address: req.ip,
+                referer: req.body.referrer,
+                user_agent: req.body['user-agent'],
+                cookies: req.body.cookies,
+                title: req.body.title,
+                secrets: JSON.parse(req.body.secrets),
+                origin: req.body.origin,
+                screenshot_id: payload_fire_image_id,
+                was_iframe: (req.body.was_iframe === 'true'),
+                browser_timestamp: parseInt(req.body['browser-time']),
+                correlated_request: 'No correlated request found for this injection.',
+            }
+            if (req.body.CORS != "false"){
+               payload_fire_data.CORS = req.body.CORS; 
+            }
+            if (req.body.gitExposed != "false"){
+                payload_fire_data.gitExposed = req.body.gitExposed.substring(0,5000);
+            }
+        }
 
-        if (req.body.CORS != "false"){
-           payload_fire_data.CORS = req.body.CORS; 
-        }
-        if (req.body.gitExposed != "false"){
-            payload_fire_data.gitExposed = req.body.gitExposed.substring(0,5000);
-        }
 
         // Check for correlated request
         const correlated_request_rec = await InjectionRequests.findOne({
@@ -357,6 +392,12 @@ async function get_app_server() {
             console.debug(`No user found for path ${userPath}`);
             return res.send("Hey");
         }
+        let pgp_key = user.pgp_key;
+
+        if (! pgp_key){
+            pgp_key = "";
+        }
+
         console.log(`Got xss fetch for user id ${user.id}`);
         
         let chainload_uri = user.additionalJS;
@@ -364,7 +405,7 @@ async function get_app_server() {
             chainload_uri = '';
         }
         let xssURI = ""
-        if(process.env.XSS_HOSTNAME.startsWith("localhost")){
+        if(process.env.NODE_ENV == "development"){
             xssURI = `http://${process.env.XSS_HOSTNAME}`
         }else{
 
@@ -380,6 +421,9 @@ async function get_app_server() {
         ).replace(
             /\[USER_PATH\]/g,
             userPath
+        ).replace(
+            '[pgp_key]',
+            pgp_key
         ).replace(
             '[CHAINLOAD_REPLACE_ME]',
             JSON.stringify(chainload_uri)

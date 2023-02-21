@@ -38,6 +38,11 @@ Users.init({
         allowNull: false,
         unique: true
     },
+    pgp_key: {
+        type: Sequelize.TEXT,
+        allownull: true,
+        unique: false
+    },
     path: {
         type: Sequelize.TEXT,
         allownull: true,
@@ -126,10 +131,29 @@ PayloadFireResults.init({
 		type: Sequelize.UUID,
 		defaultValue: Sequelize.UUIDV4
 	},
+    //boolean if it's encrypted or not
+    encrypted: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        unique: false,
+        defaultValue: false
+    },
+    //the encrypted data blob
+    encrypted_data: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        unique: false
+    },
+    //the public key used to encrypt the data
+    public_key: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        unique: false
+    },
 	// URL the XSS payload fired on.
 	url: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
     // The id of the user who the payload goes with
@@ -142,14 +166,14 @@ PayloadFireResults.init({
 	// triggered the XSS payload fire.
 	ip_address: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// The referer for the page the
 	// XSS payload fired on.
 	referer: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// User-Agent of the browser for
@@ -157,7 +181,7 @@ PayloadFireResults.init({
 	// payload fire.
 	user_agent: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// Cookies of the user for the domain
@@ -165,20 +189,20 @@ PayloadFireResults.init({
 	// Obviously, this excludes HTTPOnly
 	cookies: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// Title of the page which the payload fired on.
 	title: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// HTTP origin of the page (e.g.
 	// https://example.com)
 	origin: {
 		type: Sequelize.TEXT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// Random ID of the screenshot
@@ -191,14 +215,14 @@ PayloadFireResults.init({
 	// of an iframe or not.
 	was_iframe: {
 		type: Sequelize.BOOLEAN,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
 	// Timestamp as reported by the
 	// user's browser
 	browser_timestamp: {
 		type: Sequelize.BIGINT,
-		allowNull: false,
+		allowNull: true,
 		unique: false
 	},
     // git directory exposed
@@ -247,9 +271,11 @@ PayloadFireResults.init({
 
 let savePayload = async function(inbound_payload){
     let payload = await PayloadFireResults.create(inbound_payload);
-    for (const secret of inbound_payload.secrets){
-        secret.payload_id = payload.id;
-        await Secrets.create(secret);
+    if(inbound_payload.secrets){
+        for (const secret of inbound_payload.secrets){
+            secret.payload_id = payload.id;
+            await Secrets.create(secret);
+        }
     }
     return payload
 }

@@ -36,6 +36,7 @@
     "sequelize": "^6.5.0",
     "serve-favicon": "^2.5.0",
     "uuid": "^8.3.2",
+    "openpgp": "^5.5.0",
     "vue-moment": "^4.1.0"
   },
   "devDependencies": {

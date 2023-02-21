@@ -140,6 +140,15 @@ async function update_user_path(path) {
     );
 }
 
+async function update_pgp_key(pgp_key) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "pgp_key": pgp_key,
+        }
+    );
+}
 
 async function set_chainload_uri(chainload_uri) {
     return api_request(
@@ -188,6 +197,7 @@ module.exports = {
     is_authenticated,
     authenticate,
     get_user_path,
+    update_pgp_key,
     update_user_path,
     get_payload_fires,
     delete_payload_fires,

@@ -31,7 +31,7 @@
                         </card>
                         <card>
                             <h4 class="card-title">PGP Public Key</h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Valid PGP public keys here will have the victim PGP encrypt the payload. This can only be decrypted locally by the coorisponding private key. </br></br>gpg --armor --export KEYID</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">Valid PGP public keys here will have the victim PGP encrypt the payload. This can only be decrypted locally by the corresponding private key. </br></br>gpg --armor --export KEYID</h6>
                             <p class="card-text">
                                 <textarea v-model="pgp_key" type="text" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK----- ..."></textarea>
                             </p>

@@ -28,6 +28,7 @@ const Sentry = require('@sentry/node');
 
 const SCREENSHOTS_DIR = path.resolve(process.env.SCREENSHOTS_DIR);
 const SCREENSHOT_FILENAME_REGEX = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.png$/i);
+const SCREENSHOT_FILENAME_REGEX_ENC = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.b64png.enc$/i);
 
 
 var sessions_middleware = false;
@@ -213,7 +214,7 @@ async function set_up_api_server(app) {
         const screenshot_filename = req.params.screenshotFilename;
 
         // Come correct or don't come at all.
-        if(!SCREENSHOT_FILENAME_REGEX.test(screenshot_filename)) {
+        if(!SCREENSHOT_FILENAME_REGEX.test(screenshot_filename) && !SCREENSHOT_FILENAME_REGEX_ENC.text(screenshot_filename)) {
             return res.sendStatus(404);
         }
 

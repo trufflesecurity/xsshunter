@@ -50,7 +50,6 @@ const XSS_PAYLOAD = fs.readFileSync(
 var multer = require('multer');
 var upload = multer({ dest: '/tmp/' })
 const SCREENSHOTS_DIR = path.resolve(process.env.SCREENSHOTS_DIR);
-const SCREENSHOT_FILENAME_REGEX = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.png$/i);
 
 async function get_app_server() {
 	const app = express();

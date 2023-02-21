@@ -233,7 +233,6 @@ async function set_up_api_server(app) {
                 res.set('Content-Encoding', 'gzip');
                 if(gz_image_path.endsWith(".b64png.enc.gz")){
                     res.set('Content-Type', 'text/plain');
-                    res.setHeader('Content-disposition', 'attachment; filename=screenshot.b64png.enc');
                     res.send(file);
                 }else{
                     res.set('Content-Type', 'image/png');

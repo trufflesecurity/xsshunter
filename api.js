@@ -408,7 +408,7 @@ async function set_up_api_server(app) {
                 if(payload.encrypted){
                     filename = `${payload.screenshot_id}.b64png.enc.gz`
                 }else{
-                    fileName = `${payload.screenshot_id}.png.gz`;
+                    filename = `${payload.screenshot_id}.png.gz`;
                 }
                 return storage.bucket(process.env.BUCKET_NAME).file(filename).delete();
             }));

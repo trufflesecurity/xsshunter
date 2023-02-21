@@ -287,6 +287,11 @@ async function get_app_server() {
     	const payload_fire_id = uuid.v4();
         let payload_fire_data = {}
         if(encrypted){
+            if (req.body.encrypted_data.length > 100000){
+                return res.status(400).json({
+                    "status": "error length too long"
+                }).end();
+            }
             payload_fire_data = {
                 id: payload_fire_id,
                 user_id: userID,

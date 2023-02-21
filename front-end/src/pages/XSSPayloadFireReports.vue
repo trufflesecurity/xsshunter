@@ -26,6 +26,9 @@
                                             <i>Fired {{report.createdAt | moment("from", "now") }}</i>
                                         </p>
                                     </div>
+                                    <div v-else>
+                                        <a class="m-0 w-100 btn-fill" v-bind:href="base_api_path + '/screenshots/' + report.screenshot_id + '.b64png.enc'" target="_blank" class="fas fa-angle-double-down">Download encrypted screenshot</a> 
+                                    </div>
                                     <div class="mt-3 button-full">
                                         <base-button class="m-0 btn-fill" simple type="primary" v-on:click="expand_report(report.id)" v-if="!is_report_id_expanded(report.id)">
                                             <i class="fas fa-angle-double-down"></i> Expand Report

@@ -722,14 +722,14 @@ async function set_up_api_server(app) {
                 }).end();
             }
             user.pgp_key = req.body.pgp_key;
+        }else if(req.body.pgp_key === ""){
+            user.pgp_key = null;
         }
 
         if(req.body.send_alert_emails !== undefined) {
             user.sendEmailAlerts = req.body.send_alert_emails;
         }
         await user.save();
-        console.log("HI");
-        console.log(user.pgp_key);
 
         res.status(200).json({
             'success': true,

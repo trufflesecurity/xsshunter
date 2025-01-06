@@ -6,9 +6,9 @@
                 <sidebar-link to="/xsspayloads" name="XSS Payloads" icon="fas fa-file-code" />
                 <sidebar-link to="/settings" name="Settings" icon="fas fa-cogs" />
                 <li class="nav-item mt-5">
-                  <a target="_blank" href="https://twitter.com/TruffleSecurity" class="nav-link">
+                  <a target="_blank" href="https://twitter.com/TruffleSec" class="nav-link">
                     <i class="fab fa-twitter"></i>
-                    <p>@TruffleSecurity</p>
+                    <p>@TruffleSec</p>
                   </a>
                 </li>
                 <li class="nav-item">

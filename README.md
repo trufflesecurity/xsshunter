@@ -1,7 +1,7 @@
 # XSSHunter
 ## *Sets up in 5 minutes and requires no maintenance*
 
-The fastest way to set up XSS Hunter to test and find blind cross-site scripting vulnerabilities.
+The fastest way to set up XSS Hunter to test and find blind cross-site scripting vulnerabilities
 
 ## Setup (Five minutes, try not to skim too much)
 

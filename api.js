@@ -415,9 +415,9 @@ async function get_api_server() {
         if ( process.env.USE_CLOUD_STORAGE == "true"){ 
             const storage = new Storage();
             await Promise.all(screenshot_id_records.map(payload => {
-                let filename = ""
+                let filename = "";
                 if(payload.encrypted){
-                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                    filename = `${payload.screenshot_id}.b64png.enc.gz`;
                 }else{
                     filename = `${payload.screenshot_id}.png.gz`;
                 }
@@ -425,11 +425,11 @@ async function get_api_server() {
             }));
         }else{
             await Promise.all(screenshot_id_records.map(payload => {
-                let filename = "${SCREENSHOTS_DIR}/"
+                let filename = "";
                 if(payload.encrypted){
-                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                    filename = `${SCREENSHOTS_DIR}/${payload.screenshot_id}.b64png.enc.gz`;
                 }else{
-                    fileName = `${payload.screenshot_id}.png.gz`;
+                    filename = `${SCREENSHOTS_DIR}/${payload.screenshot_id}.png.gz`;
                 }
                 return asyncfs.unlink(filename);
             }));

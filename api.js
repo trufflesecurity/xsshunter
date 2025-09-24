@@ -273,6 +273,10 @@ async function get_api_server() {
         }
     });
 
+    // add home route
+    app.get('/', async (req, res) => {
+        res.redirect("/app/");
+    });
 
     // Serve the front-end
     app.use('/app/', express.static(

@@ -436,20 +436,6 @@ async function get_app_server() {
     // Handler that returns the XSS payload at the base path
     app.get('/', payload_handler);
 
-    /*
-		Enabling the web control panel is 100% optional. This can be
-		enabled with the "CONTROL_PANEL_ENABLED" environment variable.
-
-		However, if the user just wants alerts on payload firing then
-		they can disable the web control panel to reduce attack surface.
-	*/
-	if(process.env.CONTROL_PANEL_ENABLED === 'true') {
-        // Enable API and static asset serving.
-        await api.set_up_api_server(app);
-	} else {
-        console.log(`[INFO] Control panel NOT enabled. Not serving API or GUI server, only acting as a notification server...`);
-    }
-
     app.get('/:probe_id', payload_handler);
 
     return app;

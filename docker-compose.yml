@@ -6,6 +6,7 @@ services:
       - config.env
     ports:
       - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8888:8888"
     volumes:
       # Directory where payload fire images are stored.
       - ./payload-fire-images:/app/payload-fire-images

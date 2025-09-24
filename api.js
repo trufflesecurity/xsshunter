@@ -65,7 +65,8 @@ async function check_file_exists(file_path) {
 }
 
 
-async function set_up_api_server(app) {
+async function get_api_server() {
+    const app = express();
     // Check for existing session secret value
     const session_secret_setting = process.env.SESSION_SECRET_KEY;
 
@@ -173,25 +174,26 @@ async function set_up_api_server(app) {
     });
 
     app.get('/login', (req, res) => {
-      const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
+      /*const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
       const authUrl = client.generateAuthUrl({
         redirect_uri: process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`,
         access_type: 'offline',
         scope: ['email', 'profile'],
         prompt: 'select_account'
-      });
-      res.redirect(authUrl);
+      });*/
+      res.redirect('/oauth-login');
     });
 
     app.get('/oauth-login', async (req, res) => {
-      const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
+      //const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
       try{
-          const code = req.query.code;
+          /*const code = req.query.code;
           const {tokens} = await client.getToken(code);
           client.setCredentials(tokens);
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
-          const email = googleUserProfile.data.email
+          const email = googleUserProfile.data.email*/
+          const email = 'user@localhost.lan'
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
           if(created){
             user.path = makeRandomPath(10);
@@ -753,8 +755,8 @@ async function set_up_api_server(app) {
             'result': {}
         }).end();
     });
+
+    return app;
 }
 
-module.exports = {
-    set_up_api_server
-};
+module.exports = get_api_server;

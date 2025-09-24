@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const openpgp = require('openpgp');
 const { Storage } = require('@google-cloud/storage');
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const uuid = require('uuid');
@@ -86,6 +87,8 @@ async function get_api_server() {
 
     // Session management
     app.use(session_wrapper_function);
+
+    app.use(bodyParser.json());
 
     /* lol make this be a thing later TODO
     // Limit how big uploads are

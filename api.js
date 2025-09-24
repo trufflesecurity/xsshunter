@@ -220,20 +220,20 @@ async function get_api_server() {
             return res.sendStatus(404);
         }
 
-        const gz_image_path = `${screenshot_filename}.gz`;
+        const gz_image_filename = `${screenshot_filename}.gz`;
 
         if (process.env.USE_CLOUD_STORAGE == "true"){
             const storage = new Storage();
 
             const bucket = storage.bucket(process.env.BUCKET_NAME);
 
-            const file = bucket.file(gz_image_path);
+            const file = bucket.file(gz_image_filename);
             try {
                 // Download the gzipped image
                 const [image] = await file.download();
                 // Send the gzipped image in the response
                 res.set('Content-Encoding', 'gzip');
-                if(gz_image_path.endsWith(".b64png.enc.gz")){
+                if(gz_image_filename.endsWith(".b64png.enc.gz")){
                     res.set('Content-Type', 'text/plain');
                     res.setHeader('Content-disposition', 'attachment; filename=screenshot.b64png.enc');
                     res.send(image);
@@ -248,6 +248,7 @@ async function get_api_server() {
                 res.status(404).send(`Error retrieving image from GCS`);
             }
         }else{
+            const gz_image_path = `${SCREENSHOTS_DIR}/${gz_image_filename}.jpg`;
             const image_exists = await check_file_exists(gz_image_path);
 
             if(!image_exists) {

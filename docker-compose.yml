@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # XSS Hunter Express service
   xsshunterexpress:
@@ -10,13 +9,12 @@ services:
     volumes:
       # Directory where payload fire images are stored.
       - ./payload-fire-images:/app/payload-fire-images
+      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
     depends_on:
       postgresdb:
         condition: service_healthy
-    volumes:
-      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
   postgresdb:
-    image: postgres
+    image: postgres:16
     restart: always
     env_file:
       - dev.env
@@ -25,7 +23,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
-      interval: 3s
+      interval: 5s
       timeout: 5s
       retries: 5
     volumes:

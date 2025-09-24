@@ -4,9 +4,6 @@ services:
     build: .
     env_file:
       - config.env
-    ports:
-      - "127.0.0.1:8080:8080"
-      - "127.0.0.1:8888:8888"
     volumes:
       # Directory where payload fire images are stored.
       - payload-fire-images:/app/payload-fire-images:rw
@@ -29,6 +26,17 @@ services:
       retries: 5
     volumes:
       - postgres-db-data:/var/lib/postgresql/data/pgdata:rw
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "${API_PORT}:${API_PORT}"
+      - "${PORT}:${PORT}"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
+
 
 volumes:
   payload-fire-images:

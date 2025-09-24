@@ -28,7 +28,9 @@ services:
       - postgres-db-data:/var/lib/postgresql/data/pgdata:rw
   caddy:
     image: caddy:2
-    restart: unless-stopped
+    restart: always
+    env_file:
+      - config.env
     ports:
       - "${API_PORT}:${API_PORT}"
       - "${PORT}:${PORT}"

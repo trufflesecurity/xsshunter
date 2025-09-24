@@ -200,10 +200,10 @@ async function get_app_server() {
 			"status": "success"
 		}).end();
 
-        if(req.get('host') != process.env.XSS_HOSTNAME) {
+        /*if(req.get('host') != process.env.XSS_HOSTNAME) {
             console.debug(`got bad host ${req.get('host')}`);
             return res.redirect("/app/")
-        }
+        }*/
         const userPath = req.body.path;
         if (!userPath){
             console.debug("req had no user path ID");
@@ -380,10 +380,10 @@ async function get_app_server() {
         res.set("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
         res.set("Access-Control-Max-Age", "86400");
 
-        if(req.get('host') != process.env.XSS_HOSTNAME) {
+        /*if(req.get('host') != process.env.XSS_HOSTNAME) {
             console.debug(req.get('host'));
             return res.redirect("/app/");
-        }
+        }*/
 
         const userPath = req.originalUrl.split("/")[1];
         const user = await Users.findOne({ where: { 'path': userPath } });

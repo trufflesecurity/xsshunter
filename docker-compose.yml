@@ -3,7 +3,7 @@ services:
   xsshunterexpress:
     build: .
     env_file:
-      - dev.env
+      - config.env
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
@@ -17,7 +17,7 @@ services:
     image: postgres:16
     restart: always
     env_file:
-      - dev.env
+      - config.env
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_HOST_AUTH_METHOD: trust

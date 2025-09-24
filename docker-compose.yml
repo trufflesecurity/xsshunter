@@ -9,8 +9,8 @@ services:
       - "127.0.0.1:8888:8888"
     volumes:
       # Directory where payload fire images are stored.
-      - ./payload-fire-images:/app/payload-fire-images
-      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
+      - payload-fire-images:/app/payload-fire-images:rw
+      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json:ro
     depends_on:
       postgresdb:
         condition: service_healthy
@@ -28,4 +28,8 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./postgres-db-data:/var/lib/postgresql/data/pgdata
+      - postgres-db-data:/var/lib/postgresql/data/pgdata:rw
+
+volumes:
+  payload-fire-images:
+  postgres-db-data:

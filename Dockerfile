@@ -1,6 +1,7 @@
 FROM node:16-bullseye
 
 RUN mkdir /app/
+RUN mkdir /app/payload-fire-images
 WORKDIR /app/
 RUN npm install pm2 -g
 RUN apt update; apt install -y libstdc++6
@@ -26,6 +27,7 @@ COPY utils.js /app/
 COPY docker-entrypoint.sh /app/
 RUN chmod +x /app/docker-entrypoint.sh
 COPY templates /app/templates
+RUN chown -R node:node /app
 
 USER node
 

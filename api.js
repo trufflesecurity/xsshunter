@@ -248,7 +248,7 @@ async function get_api_server() {
                 res.status(404).send(`Error retrieving image from GCS`);
             }
         }else{
-            const gz_image_path = `${SCREENSHOTS_DIR}/${gz_image_filename}.jpg`;
+            const gz_image_path = `${SCREENSHOTS_DIR}/${gz_image_filename}`;
             const image_exists = await check_file_exists(gz_image_path);
 
             if(!image_exists) {

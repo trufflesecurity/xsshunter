@@ -65,7 +65,8 @@ async function check_file_exists(file_path) {
 }
 
 
-async function set_up_api_server(app) {
+async function get_api_server() {
+    const app = express();
     // Check for existing session secret value
     const session_secret_setting = process.env.SESSION_SECRET_KEY;
 
@@ -754,8 +755,8 @@ async function set_up_api_server(app) {
             'result': {}
         }).end();
     });
+
+    return app;
 }
 
-module.exports = {
-    set_up_api_server
-};
+module.exports = get_api_server;

@@ -1,4 +1,5 @@
 *.env
+.env
 node_modules
 *.bak
 postgres-db-data/*
@@ -8,7 +9,6 @@ front-end/run.sh
 .greenlockrc
 greenlock.d/*
 ssldata/*
-config.env
 payload-fire-images/*.gz
 payload-fire-images/*.png
 deploy.sh

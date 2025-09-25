@@ -26,8 +26,8 @@ services:
       retries: 5
     volumes:
       - postgres-db-data:/var/lib/postgresql/data/pgdata:rw
-  caddy:
-    image: caddy:2
+  nginx:
+    image: nginx:stable
     restart: always
     env_file:
       - config.env
@@ -35,11 +35,10 @@ services:
       - "${API_PORT}:${API_PORT}"
       - "${PORT}:${PORT}"
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-      - ./Caddyfile:/etc/caddy/Caddyfile
-
+      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
 
 volumes:
   payload-fire-images:
   postgres-db-data:
+  caddy-config:
+  caddy-data:

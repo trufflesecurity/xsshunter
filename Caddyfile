@@ -1,7 +1,0 @@
-https://{$HOSTNAME:localhost}:{$API_PORT:8888} {
-    reverse_proxy xsshunterexpress:{$API_PORT:8888}
-}
-
-https://{$XSS_HOSTNAME:localhost}:{$PORT:8181} {
-    reverse_proxy xsshunterexpress:{$PORT:8181}
-}

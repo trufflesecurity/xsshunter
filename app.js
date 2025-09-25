@@ -349,8 +349,9 @@ async function get_app_server() {
         console.log(`Saved result for user id ${userID}`);
 		// Send out notification via configured notification channel
 		if(user.sendEmailAlerts && process.env.EMAIL_NOTIFICATIONS_ENABLED=="true") {
-			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
-            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+            //TODO: Fix port handling and check if API Panel is required?
+			payload_fire_data.screenshot_url = `https://${process.env.XSS_HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.XSS_HOSTNAME}`;
 			await notification.send_email_notification(payload_fire_data, user.email);
 		}
 	});
@@ -409,7 +410,7 @@ async function get_app_server() {
             xssURI = `http://${process.env.XSS_HOSTNAME}:${process.env.PORT}`
         }else{
 
-            xssURI = `https://${process.env.XSS_HOSTNAME}:${process.env.XSS_HOSTNAME}`
+            xssURI = `https://${process.env.XSS_HOSTNAME}:${process.env.PORT}`
         }
 
         res.send(XSS_PAYLOAD.replace(

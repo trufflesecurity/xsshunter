@@ -1,6 +1,6 @@
 server {
     listen ${API_PORT} ssl;
-    server_name ${HOSTNAME};
+    server_name ${XSS_HOSTNAME};
 
     ssl_certificate /etc/letsencrypt/live/${HOSTNAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${HOSTNAME}/privkey.pem;

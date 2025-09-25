@@ -2,6 +2,8 @@ services:
   # XSS Hunter Express service
   xsshunterexpress:
     build: .
+    env_file:
+      - .env
     volumes:
       # Directory where payload fire images are stored.
       - payload-fire-images:/app/payload-fire-images:rw
@@ -12,6 +14,8 @@ services:
   postgresdb:
     image: postgres:16
     restart: always
+    env_file:
+      - .env
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_HOST_AUTH_METHOD: trust
@@ -25,11 +29,13 @@ services:
   nginx:
     image: nginx:stable
     restart: always
+    env_file:
+      - .env
     ports:
       - "${API_PORT}:${API_PORT}"
       - "${PORT}:${PORT}"
     volumes:
-      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - ./default.conf.template:/etc/nginx/templates/default.conf.template:ro
 
 volumes:
   payload-fire-images:

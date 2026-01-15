@@ -348,10 +348,10 @@ async function get_app_server() {
 
         console.log(`Saved result for user id ${userID}`);
 		// Send out notification via configured notification channel
-		if(user.sendEmailAlerts && process.env.EMAIL_NOTIFICATIONS_ENABLED=="true") {
+		if(user.sendEmailAlerts && process.env.SMTP_EMAIL_NOTIFICATIONS_ENABLED=="true") {
             //TODO: Fix port handling and check if API Panel is required?
-			payload_fire_data.screenshot_url = `https://${process.env.XSS_HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
-            payload_fire_data.xsshunter_url = `https://${process.env.XSS_HOSTNAME}`;
+			payload_fire_data.screenshot_url = `https://${process.env.XSS_HOSTNAME}:${process.env.API_PORT}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.XSS_HOSTNAME}:${process.env.API_PORT}`;
 			await notification.send_email_notification(payload_fire_data, user.email);
 		}
 	});

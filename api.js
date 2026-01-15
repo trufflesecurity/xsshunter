@@ -196,7 +196,7 @@ async function get_api_server() {
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
           const email = googleUserProfile.data.email*/
-          const email = 'user@localhost.lan'
+          const email = process.env.SMTP_RECEIVER_EMAIL;
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
           if(created){
             user.path = makeRandomPath(10);

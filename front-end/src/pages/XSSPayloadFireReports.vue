@@ -550,7 +550,7 @@ pre {
 
 .report-image {
     width: 100%;
-    height: 50vh;
+    height: 100%;
 }
 
 .badge-pill {

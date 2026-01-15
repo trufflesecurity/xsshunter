@@ -311,7 +311,7 @@ async function get_app_server() {
                 user_id: userID,
                 url: req.body.uri,
                 encrypted: false,
-                ip_address: req.ip,
+                ip_address: req.headers['x-real-ip'],
                 referer: req.body.referrer,
                 user_agent: req.body['user-agent'],
                 cookies: req.body.cookies,

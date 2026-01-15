@@ -1,6 +1,6 @@
 const BASE_API_PATH = location.origin.toString();
 const api_url_object = new URL(BASE_API_PATH);
-const BASE_DOMAIN = api_url_object.host;
+const BASE_DOMAIN = `${api_url_object.host}:${api_url_object.port}`;
 
 async function api_request(method, path, body) {
     var request_options = {

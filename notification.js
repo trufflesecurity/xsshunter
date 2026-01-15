@@ -1,5 +1,4 @@
-const sendgrid = require('@sendgrid/mail')
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY)
+const nodemailer = require('nodemailer');
 const mustache = require('mustache');
 const fs = require('fs');
 
@@ -9,6 +8,16 @@ const XSS_PAYLOAD_FIRE_EMAIL_TEMPLATE = fs.readFileSync(
 );
 
 async function send_email_notification(xss_payload_fire_data, email) {
+    const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT),
+            secure: (process.env.SMTP_USE_TLS === "true"),
+            auth: {
+                user: process.env.SMTP_USERNAME,
+                pass: process.env.SMTP_PASSWORD,
+            },
+        });
+
 	const notification_html_email_body = mustache.render(
 		XSS_PAYLOAD_FIRE_EMAIL_TEMPLATE, 
 		xss_payload_fire_data
@@ -17,25 +26,23 @@ async function send_email_notification(xss_payload_fire_data, email) {
     const fire_location = (!xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
 
 	const msg = {
-		from: process.env.EMAIL_FROM,
+		from: process.env.SMTP_FROM_EMAIL,
 		to: email,
 		subject: `[XSS Hunter Express] XSS Payload Fired On ${fire_location}`,
 		text: "Only HTML reports are available, please use an email client which supports this.",
 		html: notification_html_email_body,
-		asm: {
-			groupId: parseInt(process.env.SENDGRID_UNSUBSRIBE_GROUP_ID),
-			groupsToDisplay: [
-				parseInt(process.env.SENDGRID_UNSUBSRIBE_GROUP_ID)
-			]
-		},		
-	}
-	response = await sendgrid
-	.send(msg)
+	};
+
+	response = await transporter
+	.sendMail(msg)
+	.then((info) => {
+          console.log("Message sent: %s", info.messageId);
+    })
 	.catch((error) => {
 		console.error(error);
+		return false;
 	})
 
-	console.debug("Message emailed with status %d", response[0].statusCode);
 	return true;
 }
 

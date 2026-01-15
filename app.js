@@ -200,10 +200,10 @@ async function get_app_server() {
 			"status": "success"
 		}).end();
 
-        if(req.get('host') != process.env.XSS_HOSTNAME) {
+        /*if(req.get('host') != process.env.XSS_HOSTNAME) {
             console.debug(`got bad host ${req.get('host')}`);
             return res.redirect("/app/")
-        }
+        }*/
         const userPath = req.body.path;
         if (!userPath){
             console.debug("req had no user path ID");
@@ -311,7 +311,7 @@ async function get_app_server() {
                 user_id: userID,
                 url: req.body.uri,
                 encrypted: false,
-                ip_address: req.ip,
+                ip_address: req.headers['x-real-ip'],
                 referer: req.body.referrer,
                 user_agent: req.body['user-agent'],
                 cookies: req.body.cookies,
@@ -348,9 +348,10 @@ async function get_app_server() {
 
         console.log(`Saved result for user id ${userID}`);
 		// Send out notification via configured notification channel
-		if(user.sendEmailAlerts && process.env.EMAIL_NOTIFICATIONS_ENABLED=="true") {
-			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
-            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+		if(user.sendEmailAlerts && process.env.SMTP_EMAIL_NOTIFICATIONS_ENABLED=="true") {
+            //TODO: Fix port handling and check if API Panel is required?
+			payload_fire_data.screenshot_url = `https://${process.env.XSS_HOSTNAME}:${process.env.API_PORT}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.XSS_HOSTNAME}:${process.env.API_PORT}`;
 			await notification.send_email_notification(payload_fire_data, user.email);
 		}
 	});
@@ -380,10 +381,10 @@ async function get_app_server() {
         res.set("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
         res.set("Access-Control-Max-Age", "86400");
 
-        if(req.get('host') != process.env.XSS_HOSTNAME) {
+        /*if(req.get('host') != process.env.XSS_HOSTNAME) {
             console.debug(req.get('host'));
             return res.redirect("/app/");
-        }
+        }*/
 
         const userPath = req.originalUrl.split("/")[1];
         const user = await Users.findOne({ where: { 'path': userPath } });
@@ -406,10 +407,10 @@ async function get_app_server() {
         }
         let xssURI = ""
         if(process.env.NODE_ENV == "development"){
-            xssURI = `http://${process.env.XSS_HOSTNAME}`
+            xssURI = `http://${process.env.XSS_HOSTNAME}:${process.env.PORT}`
         }else{
 
-            xssURI = `https://${process.env.XSS_HOSTNAME}`
+            xssURI = `https://${process.env.XSS_HOSTNAME}:${process.env.PORT}`
         }
 
         res.send(XSS_PAYLOAD.replace(
@@ -435,20 +436,6 @@ async function get_app_server() {
 
     // Handler that returns the XSS payload at the base path
     app.get('/', payload_handler);
-
-    /*
-		Enabling the web control panel is 100% optional. This can be
-		enabled with the "CONTROL_PANEL_ENABLED" environment variable.
-
-		However, if the user just wants alerts on payload firing then
-		they can disable the web control panel to reduce attack surface.
-	*/
-	if(process.env.CONTROL_PANEL_ENABLED === 'true') {
-        // Enable API and static asset serving.
-        await api.set_up_api_server(app);
-	} else {
-        console.log(`[INFO] Control panel NOT enabled. Not serving API or GUI server, only acting as a notification server...`);
-    }
 
     app.get('/:probe_id', payload_handler);
 

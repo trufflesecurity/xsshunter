@@ -392,9 +392,9 @@ async function hook_load_if_not_ready() {
         }
         probe_return_data['secrets'] = JSON.stringify(probe_return_data['secrets']);
         html2canvas(document.body).then(function(canvas) {
-            StackBlur.canvasRGB(
+            /*StackBlur.canvasRGB(
                 canvas, 0, 0, canvas.width, canvas.height, 20
-            );
+            );*/
             var tempCanvas = document.createElement("canvas"),
             tCtx = tempCanvas.getContext("2d");
             tempCanvas.width = 2560;

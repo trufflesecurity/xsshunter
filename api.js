@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const openpgp = require('openpgp');
 const { Storage } = require('@google-cloud/storage');
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const uuid = require('uuid');
@@ -65,7 +66,8 @@ async function check_file_exists(file_path) {
 }
 
 
-async function set_up_api_server(app) {
+async function get_api_server() {
+    const app = express();
     // Check for existing session secret value
     const session_secret_setting = process.env.SESSION_SECRET_KEY;
 
@@ -85,6 +87,8 @@ async function set_up_api_server(app) {
 
     // Session management
     app.use(session_wrapper_function);
+
+    app.use(bodyParser.json());
 
     /* lol make this be a thing later TODO
     // Limit how big uploads are
@@ -173,25 +177,26 @@ async function set_up_api_server(app) {
     });
 
     app.get('/login', (req, res) => {
-      const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
+      /*const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
       const authUrl = client.generateAuthUrl({
         redirect_uri: process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`,
         access_type: 'offline',
         scope: ['email', 'profile'],
         prompt: 'select_account'
-      });
-      res.redirect(authUrl);
+      });*/
+      res.redirect('/oauth-login');
     });
 
     app.get('/oauth-login', async (req, res) => {
-      const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
+      //const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
       try{
-          const code = req.query.code;
+          /*const code = req.query.code;
           const {tokens} = await client.getToken(code);
           client.setCredentials(tokens);
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
-          const email = googleUserProfile.data.email
+          const email = googleUserProfile.data.email*/
+          const email = process.env.SMTP_RECEIVER_EMAIL;
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
           if(created){
             user.path = makeRandomPath(10);
@@ -218,20 +223,20 @@ async function set_up_api_server(app) {
             return res.sendStatus(404);
         }
 
-        const gz_image_path = `${screenshot_filename}.gz`;
+        const gz_image_filename = `${screenshot_filename}.gz`;
 
         if (process.env.USE_CLOUD_STORAGE == "true"){
             const storage = new Storage();
 
             const bucket = storage.bucket(process.env.BUCKET_NAME);
 
-            const file = bucket.file(gz_image_path);
+            const file = bucket.file(gz_image_filename);
             try {
                 // Download the gzipped image
                 const [image] = await file.download();
                 // Send the gzipped image in the response
                 res.set('Content-Encoding', 'gzip');
-                if(gz_image_path.endsWith(".b64png.enc.gz")){
+                if(gz_image_filename.endsWith(".b64png.enc.gz")){
                     res.set('Content-Type', 'text/plain');
                     res.setHeader('Content-disposition', 'attachment; filename=screenshot.b64png.enc');
                     res.send(image);
@@ -246,6 +251,7 @@ async function set_up_api_server(app) {
                 res.status(404).send(`Error retrieving image from GCS`);
             }
         }else{
+            const gz_image_path = `${SCREENSHOTS_DIR}/${gz_image_filename}`;
             const image_exists = await check_file_exists(gz_image_path);
 
             if(!image_exists) {
@@ -267,6 +273,10 @@ async function set_up_api_server(app) {
         }
     });
 
+    // add home route
+    app.get('/', async (req, res) => {
+        res.redirect("/app/");
+    });
 
     // Serve the front-end
     app.use('/app/', express.static(
@@ -296,7 +306,7 @@ async function set_up_api_server(app) {
     */
     app.get(constants.API_BASE_PATH + 'xss-uri', async (req, res) => {
         const user = await Users.findOne({ where: { 'id': req.session.user_id } });
-        const uri = process.env.XSS_HOSTNAME + "/" + user.path;
+        const uri = process.env.XSS_HOSTNAME + ":" + process.env.PORT + "/" + user.path;
         res.status(200).json({
             "success": true,
             "result": {
@@ -405,9 +415,9 @@ async function set_up_api_server(app) {
         if ( process.env.USE_CLOUD_STORAGE == "true"){ 
             const storage = new Storage();
             await Promise.all(screenshot_id_records.map(payload => {
-                let filename = ""
+                let filename = "";
                 if(payload.encrypted){
-                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                    filename = `${payload.screenshot_id}.b64png.enc.gz`;
                 }else{
                     filename = `${payload.screenshot_id}.png.gz`;
                 }
@@ -415,11 +425,11 @@ async function set_up_api_server(app) {
             }));
         }else{
             await Promise.all(screenshot_id_records.map(payload => {
-                let filename = "${SCREENSHOTS_DIR}/"
+                let filename = "";
                 if(payload.encrypted){
-                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                    filename = `${SCREENSHOTS_DIR}/${payload.screenshot_id}.b64png.enc.gz`;
                 }else{
-                    fileName = `${payload.screenshot_id}.png.gz`;
+                    filename = `${SCREENSHOTS_DIR}/${payload.screenshot_id}.png.gz`;
                 }
                 return asyncfs.unlink(filename);
             }));
@@ -753,8 +763,8 @@ async function set_up_api_server(app) {
             'result': {}
         }).end();
     });
+
+    return app;
 }
 
-module.exports = {
-    set_up_api_server
-};
+module.exports = get_api_server;

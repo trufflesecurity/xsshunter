@@ -1,32 +1,56 @@
-version: "3.9"
 services:
   # XSS Hunter Express service
   xsshunterexpress:
     build: .
     env_file:
-      - dev.env
-    ports:
-      - "127.0.0.1:8080:8080"
+      - .env
     volumes:
       # Directory where payload fire images are stored.
-      - ./payload-fire-images:/app/payload-fire-images
+      - payload-fire-images:/app/payload-fire-images:rw
+      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://127.0.0.1:$$PORT/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     depends_on:
       postgresdb:
         condition: service_healthy
-    volumes:
-      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
   postgresdb:
-    image: postgres
+    image: postgres:16
     restart: always
     env_file:
-      - dev.env
+      - .env
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
-      interval: 3s
+      interval: 5s
       timeout: 5s
       retries: 5
     volumes:
-      - ./postgres-db-data:/var/lib/postgresql/data/pgdata
+      - postgres-db-data:/var/lib/postgresql/data/pgdata:rw
+  nginx:
+    image: nginx:stable
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+      - "${PORT}:${PORT}"
+    volumes:
+      - etc-letsencrypt:/etc/letsencrypt:ro
+      - ./xsshunterexpress.conf.template:/etc/nginx/templates/xsshunterexpress.conf.template:ro
+    depends_on:
+      xsshunterexpress:
+        condition: service_healthy
+
+volumes:
+  payload-fire-images:
+  postgres-db-data:
+  caddy-config:
+  caddy-data:
+  # Modify this accordingly
+  etc-letsencrypt:
+    external: true

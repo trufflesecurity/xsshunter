@@ -35,10 +35,17 @@ services:
       - "${API_PORT}:${API_PORT}"
       - "${PORT}:${PORT}"
     volumes:
-      - ./default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - etc-letsencrypt:/etc/letsencrypt:ro
+      - ./xsshunterexpress.conf.template:/etc/nginx/templates/xsshunterexpress.conf.template:ro
+    depends_on:
+      xsshunterexpress:
+        condition: service_started
 
 volumes:
   payload-fire-images:
   postgres-db-data:
   caddy-config:
   caddy-data:
+  # Modify this accordingly
+  etc-letsencrypt:
+    external: true
